@@ -62,7 +62,7 @@ def merge_sort_thread(data, k):
     return data[0] 
 
 if __name__ == "__main__":
-    k = 16
+    k = int(input("Number of initial chunks:")
     n_data = []
     time_data_process = []
     time_data_thread = []
