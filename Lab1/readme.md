@@ -4,11 +4,19 @@ O programa `Lab.py` recebe como entrada o tamanho do vetor e o número de chunks
 
 Além disso, foi usado um novo programa, `Lab-1-plot.py`, para simular o tempo de execução dado um número de chunks iniciais com o tamanho do vetor variando de 1000 a 100000, de 1000 em 1000.
 
-A seguir são mostrados os gráficos gerados por `Lab-1-plot.py`
+Para k=1, 2, 4, 8 e 16, escolhas orientadas pelo professor, os gráficos são os seguintes:
 
-![Uploading image.png…]()
+![Uploading k=1.png…]()
+![Uploading k=2.png…]()!
+![Uploading k=4.png…]()
+![Uploading k=8.png…]()
+![Uploading k=16.png…]()
 
+Para esses valores de k, que são pequenos, percebe-se que as threads perdem em desempenho. Repare, porém, que a partir de k=16 as threads começam a ganhar espaço. Então, foram feitas medições para valores de k maiores, especificamente k = 50, k = 100, k = 200 e k = 300:
 
+![Uploading k=50.png…]()
+![Uploading k=100.png…]()
+![Uploading k=200.png…]()
+![Uploading k=300.png…]()
 
-
-A ordenação por threads demonstrou maior desempenho para todos os k’s. Os motivos para isso podem ser variados, desde o elevado custo para se manter processos até questões de hardwares que têm suporte para threads.
+As threads apresentam grande desempenho para valores maiores atribuídos a k. Isso acontece porque o overhead para a criação de um processo é muito maior do que o da criação de uma thread, e este overhead se acumula para valores muito grandes de k.
