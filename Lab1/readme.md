@@ -7,7 +7,7 @@ Além disso, foi usado um novo programa, `Lab-1-plot.py`, para simular o tempo d
 Para k=1, 2, 4, 8 e 16, escolhas orientadas pelo professor, os gráficos são os seguintes:
 
 ![Uploading k=1.png…]()
-![Uploading k=2.png…]()!
+![Uploading k=2.png…]()
 ![Uploading k=4.png…]()
 ![Uploading k=8.png…]()
 ![Uploading k=16.png…]()
