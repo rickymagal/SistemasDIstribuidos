@@ -9,7 +9,7 @@ Além disso, foi usado um novo programa, Lab-1-plot.py, para simular o tempo de 
 Para k=1, 2, 4, 8 e 16, escolhas orientadas pelo professor, os gráficos são os seguintes:
 
 ![k=1](https://user-images.githubusercontent.com/26047473/229954395-efb6ca1f-383d-4e9c-8de8-2815b7ef0bb7.png)
-![k=2](https://user-images.githubusercontent.com/26047473/229954403-2c70112f-af3a-45d3-b65d-0b4b70fea6db.png)
+![k=2](https://user-images.githubusercontent.com/26047473/229954724-88f3685d-dd7d-4099-83c9-b34100915750.png)
 ![k=4](https://user-images.githubusercontent.com/26047473/229954417-1cebcbe7-97d7-409d-a3c9-695e69df4aed.png)
 ![k=8](https://user-images.githubusercontent.com/26047473/229954436-352a393c-391a-4431-a73d-49a901a7b8ef.png)
 ![k=16](https://user-images.githubusercontent.com/26047473/229954449-e957fcec-e2d9-430b-a4c0-2204a35d06d2.png)
