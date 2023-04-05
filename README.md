@@ -8,17 +8,17 @@ Além disso, foi usado um novo programa, Lab-1-plot.py, para simular o tempo de 
 
 Para k=1, 2, 4, 8 e 16, escolhas orientadas pelo professor, os gráficos são os seguintes:
 
-![Uploading k=1.png…]()
-![Uploading k=2.png…]()
-![Uploading k=4.png…]()
-![Uploading k=8.png…]()
-![Uploading k=16.png…]()
+![k=1](https://user-images.githubusercontent.com/26047473/229954395-efb6ca1f-383d-4e9c-8de8-2815b7ef0bb7.png)
+![k=2](https://user-images.githubusercontent.com/26047473/229954403-2c70112f-af3a-45d3-b65d-0b4b70fea6db.png)
+![k=4](https://user-images.githubusercontent.com/26047473/229954417-1cebcbe7-97d7-409d-a3c9-695e69df4aed.png)
+![k=8](https://user-images.githubusercontent.com/26047473/229954436-352a393c-391a-4431-a73d-49a901a7b8ef.png)
+![k=16](https://user-images.githubusercontent.com/26047473/229954449-e957fcec-e2d9-430b-a4c0-2204a35d06d2.png)
 
 Para esses valores de k, que são pequenos, percebe-se que as threads perdem em desempenho. Repare, porém, que a partir de k=16 as threads começam a ganhar espaço. Então, foram feitas medições para valores de k maiores, especificamente k = 50, k = 100, k = 200 e k = 300:
 
-![Uploading k=50.png…]()
-![Uploading k=100.png…]()
-![Uploading k=200.png…]()
-![Uploading k=300.png…]()
+![k=50](https://user-images.githubusercontent.com/26047473/229954457-693858ef-6427-4bac-80ca-deaca2b05feb.png)
+![k=100](https://user-images.githubusercontent.com/26047473/229954465-9ca0d5a6-9b34-42d9-b65b-ce4077b49aa7.png)
+![k=200](https://user-images.githubusercontent.com/26047473/229954471-52f57e51-df73-483e-a357-e602e2fff1e1.png)
+![k=300](https://user-images.githubusercontent.com/26047473/229954476-59ae71f0-1742-4a3e-947f-edd025b490f0.png)
 
 As threads apresentam grande desempenho para valores maiores atribuídos a k. Isso acontece porque o overhead para a criação de um processo é muito maior do que o da criação de uma thread, e esse overhead se acumula para valores muito grandes de k.
