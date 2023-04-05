@@ -19,4 +19,5 @@ Para esses valores de k, que são pequenos, percebe-se que as threads perdem em 
 ![Uploading k=200.png…]()
 ![Uploading k=300.png…]()
 
+
 As threads apresentam grande desempenho para valores maiores atribuídos a k. Isso acontece porque o overhead para a criação de um processo é muito maior do que o da criação de uma thread, e este overhead se acumula para valores muito grandes de k.
