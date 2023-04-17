@@ -62,11 +62,11 @@ def merge_sort_thread(data, k):
     return data[0] 
 
 if __name__ == "__main__":
-    k = int(input("Number of initial chunks:")
+    k = int(input("Number of initial chunks:"))
     n_data = []
     time_data_process = []
     time_data_thread = []
-    for n in range(16,1000):
+    for n in range(1000,100000,1000):
         n_data.append(n)
         vector_unsorted = [random.randint(0,n) for i in range(n)]
         start = time.time()
