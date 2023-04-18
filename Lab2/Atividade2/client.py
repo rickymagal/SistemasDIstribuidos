@@ -49,12 +49,8 @@ def client_fn_random():
     input_shape = (28, 28, 1)
     num_classes = 10
     num_clients = 6
-    partition_size = 500
     
-
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-    #sample_size_train = int(cid) * partition_size
-    #sample_size_test = int(cid) * partition_size
     sample_size_train = int((1/num_clients)*len(x_train))
     sample_size_test = int((1/num_clients)*len(x_test))
     idx_train = np.random.choice(np.arange(len(x_train)), sample_size_train, replace=False)
