@@ -49,7 +49,11 @@ def client_fn_random() -> fl.client.Client:
     input_shape = (28, 28, 1)
     num_classes = 10
     num_clients = 6
+<<<<<<< HEAD:Lab2/codigo/client.py
 
+=======
+    
+>>>>>>> ca2abf243de69539181685764754a021c7350a57:Lab2/Atividade2/client.py
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
     sample_size_train = int((1/num_clients)*len(x_train))
     sample_size_test = int((1/num_clients)*len(x_test))
