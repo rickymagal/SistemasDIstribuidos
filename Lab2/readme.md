@@ -1,8 +1,16 @@
- Esse trabalho foi feito usando as bibliotecas flower, para o aprendizado federado, tensorflow, para carregar os dados para treinamento e teste e numpy e matplotlib para processamento e demonstração dos dados. Para o treinamento, foram definidos dois programas `client.py` e `server.py`, e um número de clientes igual a 5. O programa `server.py` define o método de agregação de parâmetros, definido pela função `weighted_average` e a estratégia de aprendizado, tomando como input o número de rounds do processo. Quando o aprendizado é finalizado, o programa-servidor imprime a precisão alcançada por número de rounds.
+# Introdução
+
+Esse trabalho foi feito usando as bibliotecas flower, para o aprendizado federado, tensorflow, para carregar os dados para treinamento e teste e numpy e matplotlib para processamento e demonstração dos dados. Para o treinamento, foram definidos dois programas `client.py` e `server.py`, e um número de clientes igual a 5. O programa `server.py` define o método de agregação de parâmetros, definido pela função `weighted_average` e a estratégia de aprendizado, tomando como input o número de rounds do processo. Quando o aprendizado é finalizado, o programa-servidor imprime a precisão alcançada por número de rounds.
+
+# Programas cliente e servido
 
 O programa `client.py`, por outro lado, define o processamento do lado do cliente. Para isso, é definida uma função `define_model`, a ser usada para definir o modelo na instanciação de um objeto `FlowerClient`. A classe `FlowerClient`, que possui parâmetros para o modelo e para os dados de aprendizado e teste, possui métodos para retornar parâmetros (`get_parameters`), treino (`fit`) e para avaliação de resultados (`evaluate`). A função `fit` também recebe como entrada os parâmetros iniciais a serem dados pelo servidor ao final de cada round. Finalmente, é definida a função  `client_fn_random`, para criar um cliente aleatório, selecionando dados aleatórios de tamanho igual ao tamanho dos dados dividido pelo número de clientes.
 
-Para simular a rede, a interface localhost foi usada como endereço do servidor, conectado a uma porta padrão 8080. Para isso, usa-se a função `fl.server.start_server` para iniciar o servidor com endereço `localhost:8080` e o número de rounds e estratégias pré-definidas. Após iniciar programa-servidor, deve-se iniciar clientes de número igual a 5 (ou, se desejar, mudar o parâmetro `num_clients` nos dois programas), iniciando o programa `client.py` em terminais separados para cada cliente. Ao atingir o número de clientes, o aprendizado começa.
+# Simular Rede
+
+Para simular a rede, a interface localhost foi usada como endereço do servidor, conectado a uma porta padrão 8080. Para isso, usa-se a função `fl.server.start_server` para iniciar o servidor com endereço `localhost:8080` e o número de rounds e estratégias pré-definidas. Após iniciar programa-servidor, deve-se iniciar clientes de número igual a 5 (ou, se desejar, mudar o parâmetro `num_clients` nos dois programas), iniciando o programa `client.py` em terminais separados para cada cliente. Para iniciar cada cliente, foi utilizada a função `fl.client.start_numpy_client`, configurada ao endereço do servidor. Ao atingir o número de clientes, o aprendizado começa.
+
+# Resultados
 
 Os resultados da simulação, para 2, 5, 10, 20 e 40 rounds são mostrados a seguir:
 
