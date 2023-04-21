@@ -2,7 +2,7 @@
 
 O programa `client.py`, por outro lado, define o processamento do lado do cliente. Para isso, é definida uma função `define_model`, a ser usada para definir o modelo na instanciação de um objeto `FlowerClient`. A classe `FlowerClient`, que possui parâmetros para o modelo e para os dados de aprendizado e teste, possui métodos para retornar parâmetros (`get_parameters`), treino (`fit`) e para avaliação de resultados (`evaluate`). A função `fit` também recebe como entrada os parâmetros iniciais a serem dados pelo servidor ao final de cada round. Finalmente, é definida a função  `client_fn_random`, para criar um cliente aleatório, selecionando dados aleatórios de tamanho igual ao tamanho dos dados dividido pelo número de clientes.
 
-Para simular a rede, a interface `localhost` foi usada como endereço do servidor, conectado a uma porta padrão `8080`.
+Para simular a rede, a interface localhost foi usada como endereço do servidor, conectado a uma porta padrão 8080. Para isso, usa-se a função `fl.server.start_server` para iniciar o servidor com endereço `localhost:8080` e o número de rounds e estratégias pré-definidas. Após iniciar programa-servidor, deve-se iniciar clientes de número igual a 5 (ou, se desejar, mudar o parâmetro `num_clients` nos dois programas), iniciando o programa `client.py` em terminais separados para cada cliente. Ao atingir o número de clientes, o aprendizado começa.
 
 Os resultados da simulação, para 2, 5, 10, 20 e 40 rounds são mostrados a seguir:
 
