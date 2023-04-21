@@ -10,6 +10,9 @@ O programa `client.py`, por outro lado, define o processamento do lado do client
 
 Para simular a rede, a interface localhost foi usada como endereço do servidor, conectado a uma porta padrão 8080. Para isso, usa-se a função `fl.server.start_server` para iniciar o servidor com endereço `localhost:8080` e o número de rounds e estratégias pré-definidas. Após iniciar programa-servidor, deve-se iniciar clientes de número igual a 5 (ou, se desejar, mudar o parâmetro `num_clients` nos dois programas), iniciando o programa `client.py` em terminais separados para cada cliente. Para iniciar cada cliente, foi utilizada a função `fl.client.start_numpy_client`, configurada ao endereço do servidor. Ao atingir o número de clientes, o aprendizado começa.
 
+![image](https://user-images.githubusercontent.com/26047473/233709212-fd878020-7211-4033-ba56-94ae9d745e03.png)
+
+
 ## Resultados
 
 Os resultados da simulação, para 2, 5, 10, 20 e 40 rounds são mostrados a seguir:
