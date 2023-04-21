@@ -19,15 +19,15 @@ def weighted_average(metrics):
     results = {"accuracy": sum(acc) / sum(examples)}
     return results
 
-num_clients = 6
-num_rounds = 5
+num_clients = int(input("Numero de clientes:"))
+num_rounds = int(input("Numero de Rounds:"))
 strategy = fl.server.strategy.FedAvg(
     fraction_fit=0.9,  
     fraction_evaluate=1,  
-    min_fit_clients=5,  
-    min_evaluate_clients=5,  
+    min_fit_clients=num_clients,  
+    min_evaluate_clients=num_clients,  
     min_available_clients=int(
-        num_clients *0.9
+        num_clients
     ),  
     evaluate_metrics_aggregation_fn=weighted_average,
 )

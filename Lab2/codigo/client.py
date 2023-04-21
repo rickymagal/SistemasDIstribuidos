@@ -45,16 +45,12 @@ class FlowerClient(fl.client.NumPyClient):
         loss, acc = self.model.evaluate(self.x_test, self.y_test, verbose=2)
         return loss, len(self.x_test), {"accuracy": acc}
 
-def client_fn_random():
+def client_fn_random() -> fl.client.Client:
     input_shape = (28, 28, 1)
     num_classes = 10
     num_clients = 6
-    partition_size = 500
-    
 
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-    #sample_size_train = int(cid) * partition_size
-    #sample_size_test = int(cid) * partition_size
     sample_size_train = int((1/num_clients)*len(x_train))
     sample_size_test = int((1/num_clients)*len(x_test))
     idx_train = np.random.choice(np.arange(len(x_train)), sample_size_train, replace=False)
