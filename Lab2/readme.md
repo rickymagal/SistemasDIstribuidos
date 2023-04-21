@@ -12,4 +12,4 @@ Os resultados da simulação, para 2, 5, 10, 20 e 40 rounds são mostrados a seg
 ![20rounds](https://user-images.githubusercontent.com/26047473/233534152-45f9acb3-3784-4d12-ae1c-c03944ce8dc6.png)
 ![40rounds](https://user-images.githubusercontent.com/26047473/233534157-069ffa3a-372b-48c8-ad90-374b13c315f1.png)
 
-Podemos observar que houve grandes mudanças na precisão até o quinto para o décimo round. Depois disso, a precisão parece convergir. Isso é o resultado esperado.
+Podemos observar que houve grandes mudanças na precisão até o quinto para o décimo round. Depois disso, a precisão parece convergir. Esse é o resultado esperado.
