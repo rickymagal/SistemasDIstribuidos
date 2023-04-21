@@ -1,0 +1,1 @@
+Os programas podem ser interpretados e executados pelo comando `python3 client.py` ou `python3 server.py`, tomando a precaução de iniciar o servidor antes de iniciar os clientes, todos em terminais separados.
