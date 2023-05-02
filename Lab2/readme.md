@@ -1,3 +1,5 @@
+Por Ricardo Magalhães e Julio Nico.
+
 ## Introdução
 
 Esse trabalho foi feito usando as bibliotecas flower, para o aprendizado federado, tensorflow, para carregar os dados para treinamento e teste e numpy e matplotlib para processamento e demonstração dos dados. Para o treinamento, foram definidos dois programas `client.py` e `server.py`, e um número de clientes igual a 5. O programa `server.py` define o método de agregação de parâmetros, definido pela função `weighted_average` e a estratégia de aprendizado, tomando como input o número de rounds do processo. Quando o aprendizado é finalizado, o programa-servidor imprime a precisão alcançada por número de rounds.
