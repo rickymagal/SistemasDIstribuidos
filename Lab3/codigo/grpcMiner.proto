@@ -1,0 +1,46 @@
+syntax="proto3";
+
+package main;
+
+message intResult {
+    int32 result = 1;
+}
+
+message structResult {
+    int32 status = 1;
+    string solution = 2;
+    int32 challenge = 3;
+}
+
+message result {
+    int32 num = 1;
+}
+
+message args{
+    int32 numOne = 1;
+    int32 numTwo = 2;
+}
+
+message transactionId {
+    int32 transactionId = 1;
+}
+
+message challengeArgs{
+    int32 transactionId = 1;
+    int32 clientId = 2;
+    string solution = 3; 
+}
+
+message void {
+}
+
+service api {
+    rpc add (args) returns (result);
+    rpc getTransactionId(void) returns (intResult);
+    rpc getChallenge(transactionId) returns (intResult);
+    rpc getTransactionStatus(transactionId) returns (intResult);
+    rpc submitChallenge(challengeArgs) returns (intResult);
+    rpc getWinner(transactionId) returns (intResult);
+    rpc getSolution(transactionId) returns (structResult);
+}
+
