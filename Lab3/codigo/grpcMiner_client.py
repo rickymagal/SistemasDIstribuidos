@@ -7,10 +7,9 @@ from multiprocessing.pool import ThreadPool
 import multiprocessing as mp
 import hashlib
 import random
-import queue
 
 breaker = pybreaker.CircuitBreaker(fail_max=2, reset_timeout=2)
-fila = queue.SimpleQueue()
+fila = mp.SimpleQueue()
 @breaker
 
 def generateBinaryString(size):
@@ -25,7 +24,7 @@ def solve(challenge):
                 if guess[0:challenge] == "0" * challenge:
                         fila.put(guess)
                         break
-                
+        return
     
 
 def run(client, n):
@@ -63,10 +62,11 @@ def run(client, n):
         tid = int(input('Entre com o transactionId:'))
         cid = int(input('Entre com o clienteId: '))
         challenge = client.getChallenge(grpcMiner_pb2.transactionId(transactionId=tid)).result
-        numThreads = int(input('Digite o numero de threads a serem usadas: '))
-        pool = mp.pool.ThreadPool(processes = numThreads)
-        solve(challenge)
-        pool.apply_async(solve, challenge)
+        numProcess = int(input('Digite o numero de processos a serem usados: '))
+        pool = mp.Pool(processes = numProcess)
+        pool.apply_async(solve, args= (challenge,))
+        pool.close()
+        pool.join()
         sol = fila.get()
         res = client.submitChallenge(grpcMiner_pb2.challengeArgs(transactionId=tid,clientId=cid, solution=sol))
         print(res.result)
