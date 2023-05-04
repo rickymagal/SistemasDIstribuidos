@@ -10,13 +10,22 @@ import random
 import queue
 
 breaker = pybreaker.CircuitBreaker(fail_max=2, reset_timeout=2)
+fila = queue.SimpleQueue()
 @breaker
 
-def solve(queue, challenge):
-    guess = [random.randint(0,1)] * 160
-    if bin(int(hashlib.sha1(guess), 16))[::challenge] == [0]*challenge:
-        queue.put(guess)
-    return
+def generateBinaryString(size):
+        S = ""
+        for i in range(size):
+                S += str(random.randint(0,1))
+        return S
+
+def solve(challenge):
+        while True:
+                guess = generateBinaryString(128)
+                if guess[0:challenge] == "0" * challenge:
+                        fila.put(guess)
+                        break
+                
     
 
 def run(client, n):
@@ -53,11 +62,11 @@ def run(client, n):
         # raise pybreaker.CircuitBreakerError
         tid = int(input('Entre com o transactionId:'))
         cid = int(input('Entre com o clienteId: '))
-        challenge = client.getChallenge(grpcMiner_pb2.transactionId(transactionId=tid))
+        challenge = client.getChallenge(grpcMiner_pb2.transactionId(transactionId=tid)).result
         numThreads = int(input('Digite o numero de threads a serem usadas: '))
-        fila = queue.Queue()
         pool = mp.pool.ThreadPool(processes = numThreads)
-        pool.apply_async(solve, fila, challenge)
+        solve(challenge)
+        pool.apply_async(solve, challenge)
         sol = fila.get()
         res = client.submitChallenge(grpcMiner_pb2.challengeArgs(transactionId=tid,clientId=cid, solution=sol))
         print(res.result)

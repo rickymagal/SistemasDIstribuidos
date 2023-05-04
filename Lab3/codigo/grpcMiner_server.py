@@ -25,15 +25,13 @@ def serve():
 
 
 class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
-    def add(self, request, context):
-        return grpcMiner_pb2.result((request.numOne + request.numTwo))
     def getTransactionId(self, request, context):
         return grpcMiner_pb2.intResult(result= transaction.transaction_id)
     def getChallenge(self, request, context):
         if(request.transactionId != transaction.transaction_id):
             return grpcMiner_pb2.intResult(result = -1)
         return grpcMiner_pb2.intResult(result = transaction.challenge)
-    def  getTransationStatus(self, request, context):
+    def  getTransactionStatus(self, request, context):
          if(request.transactionId != transaction.transaction_id):
              return grpcMiner_pb2.intResult(result = 1)
          if(transaction.solution == '' and transaction.winner == 0):
@@ -44,7 +42,7 @@ class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
              return grpcMiner_pb2.intResult(result = -1)
          if(transaction.solution != '' and transaction.winner != 0):
              return grpcMiner_pb2.intResult(result = 2)
-         if(bin(int(hashlib.sha1(request.solution), 16))[::transaction.challenge] == [0] * transaction.challenge):
+         if((request.solution)[0:transaction.challenge] == "0" * transaction.challenge):
              transaction.winner = request.clientId
              transaction.solution = request.solution
              return grpcMiner_pb2.intResult(result = 1)
@@ -61,5 +59,5 @@ class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
         return grpcMiner_pb2.structResult(status = 0,solution =  transaction.solution, challenge = transaction.challenge)
          
 if __name__ == '__main__':
-    serve()
+    serve() 
     
