@@ -14,14 +14,31 @@ class Transaction:
         self.solution = solution # String que, se aplicada a função de hashing SHA-1, solucionará o desafio criptográfico proposto;
         self.winner = winner # ClientID do usuário que solucionou o desafio criptográfico para a referida TransactionI
 
-transaction = Transaction(1, random.randint(1,6), '', 0)
-        
+transactions = [Transaction(1, random.randint(1,6), '', 0)]
+
+def menu():
+    for transaction in transactions:
+        print('------------------- Transaction', transaction.transaction_id, '-------------------')
+        print('Challenge:', transaction.challenge)
+        print('Solution:', transaction.solution)
+        print('Winner:', transaction.winner)
+    print("Digite 0 para fechar ou 1 para adicionar nova transacao")
+    print()
+    n = input("Enter your choice: ")
+    if(n=='0'):
+        exit()
+    if(n=='1'):
+        tid = int(input("Enter Transaction ID:"))
+        challenge = int(input('Enter Transaction Challenge:'))
+        transactions.append(Transaction(tid, challenge, '', 0))
+
 def serve():
     grpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     grpcMiner_pb2_grpc.add_apiServicer_to_server(MinerulatorServicer(), grpc_server)
     grpc_server.add_insecure_port('[::]:8080')
     grpc_server.start()
-    grpc_server.wait_for_termination()
+    while True:
+        menu()
 
 
 class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
