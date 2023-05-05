@@ -1,4 +1,4 @@
-## Dependênias
+## Dependências
 
 `grpc 1.51.3`
 `grpcio-tools 1.51.3`
