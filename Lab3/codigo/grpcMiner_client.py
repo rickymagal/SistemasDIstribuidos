@@ -76,7 +76,7 @@ def run(client, n):
         # raise pybreaker.CircuitBreakerError
         tid = int(input('Entre com o transactionId: '))
         res = client.getSolution(grpcMiner_pb2.transactionId(transactionId=tid))
-        print(res.status, res.solution, res.challenge)
+        print(res.solution)
     elif n == '0':
         print('Fim.')
         exit()

@@ -14,7 +14,7 @@ class Transaction:
         self.solution = solution # String que, se aplicada a função de hashing SHA-1, solucionará o desafio criptográfico proposto;
         self.winner = winner # ClientID do usuário que solucionou o desafio criptográfico para a referida TransactionI
 
-transactions = [Transaction(1, random.randint(1,6), '', 0)]
+transactions = [Transaction(1, random.randint(1,6), 'None', 0)]
 
 def menu():
     print("Digite 0 para fechar, 1 para adicionar nova transacao e 2 para imprimir tabela")
@@ -61,7 +61,7 @@ class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
     def submitChallenge(self, request, context):
          for transaction in transactions:
              if(request.transactionId == transaction.transaction_id):
-                 if(transaction.solution != '' and transaction.winner != 0):
+                 if(transaction.solution != 'None' and transaction.winner != 0):
                      return grpcMiner_pb2.intResult(result = 2)
                  if((request.solution)[0:transaction.challenge] == "0" * transaction.challenge):
                      transaction.winner = request.clientId
@@ -77,10 +77,10 @@ class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
     def getSolution(self,request,context):
         for transaction in transactions:
             if(request.transactionId == transaction.transaction_id):
-                if(transaction.solution == '' and transaction.winner == 0):
-                    return grpcMiner_pb2.structResult(status = 1, solution = -1, challenge = transaction.challenge)
+                if(transaction.solution == 'None' and transaction.winner == 0):
+                    return grpcMiner_pb2.structResult(status = 1, solution = 'None', challenge = transaction.challenge)
                 return grpcMiner_pb2.structResult(status = 0,solution =  transaction.solution, challenge = transaction.challenge)
-        return grpcMiner_pb2.structResult(status = -1, solution = -1, challenge = -1)
+        return grpcMiner_pb2.structResult(status = -1, solution = 'None', challenge = -1)
          
 if __name__ == '__main__':
     serve()
