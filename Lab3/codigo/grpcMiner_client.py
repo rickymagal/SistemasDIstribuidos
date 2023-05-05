@@ -5,7 +5,6 @@ import grpcMiner_pb2_grpc
 import pybreaker
 from multiprocessing.pool import ThreadPool
 import multiprocessing as mp
-import hashlib
 import random
 
 breaker = pybreaker.CircuitBreaker(fail_max=2, reset_timeout=2)
