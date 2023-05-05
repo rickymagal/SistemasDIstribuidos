@@ -17,12 +17,7 @@ class Transaction:
 transactions = [Transaction(1, random.randint(1,6), '', 0)]
 
 def menu():
-    for transaction in transactions:
-        print('------------------- Transaction', transaction.transaction_id, '-------------------')
-        print('Challenge:', transaction.challenge)
-        print('Solution:', transaction.solution)
-        print('Winner:', transaction.winner)
-    print("Digite 0 para fechar ou 1 para adicionar nova transacao")
+    print("Digite 0 para fechar, 1 para adicionar nova transacao e 2 para imprimir tabela")
     print()
     n = input("Enter your choice: ")
     if(n=='0'):
@@ -31,6 +26,12 @@ def menu():
         tid = int(input("Enter Transaction ID:"))
         challenge = int(input('Enter Transaction Challenge:'))
         transactions.append(Transaction(tid, challenge, '', 0))
+    if(n=='2'):
+        for transaction in transactions:
+            print('------------------- Transaction', transaction.transaction_id, '-------------------')
+            print('Challenge:', transaction.challenge)
+            print('Solution:', transaction.solution)
+            print('Winner:', transaction.winner)
 
 def serve():
     grpc_server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -45,36 +46,42 @@ class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
     def getTransactionId(self, request, context):
         return grpcMiner_pb2.intResult(result= transaction.transaction_id)
     def getChallenge(self, request, context):
-        if(request.transactionId != transaction.transaction_id):
-            return grpcMiner_pb2.intResult(result = -1)
-        return grpcMiner_pb2.intResult(result = transaction.challenge)
+        for transaction in transactions:
+            if(request.transactionId == transaction.transaction_id):
+                return grpcMiner_pb2.intResult(result = transaction.challenge)
+        return grpcMiner_pb2.intResult(result = -1)
     def  getTransactionStatus(self, request, context):
-         if(request.transactionId != transaction.transaction_id):
-             return grpcMiner_pb2.intResult(result = 1)
-         if(transaction.solution == '' and transaction.winner == 0):
-             return grpcMiner_pb2.intResult(result = 1)
-         return grpcMiner_pb2.intResult(result = 0)
+        for transaction in transactions:
+            if(request.transactionId == transaction.transaction_id):
+                if(transaction.solution == '' and transaction.winner == 0):
+                    return grpcMiner_pb2.intResult(result = 1)
+                else:
+                     return grpcMiner_pb2.intResult(result = 0)
+        return grpcMiner_pb2.intResult(result = -1)
     def submitChallenge(self, request, context):
-         if(request.transactionId != transaction.transaction_id):
-             return grpcMiner_pb2.intResult(result = -1)
-         if(transaction.solution != '' and transaction.winner != 0):
-             return grpcMiner_pb2.intResult(result = 2)
-         if((request.solution)[0:transaction.challenge] == "0" * transaction.challenge):
-             transaction.winner = request.clientId
-             transaction.solution = request.solution
-             return grpcMiner_pb2.intResult(result = 1)
-         return grpcMiner_pb2.intResult(result=0)
+         for transaction in transactions:
+             if(request.transactionId == transaction.transaction_id):
+                 if(transaction.solution != '' and transaction.winner != 0):
+                     return grpcMiner_pb2.intResult(result = 2)
+                 if((request.solution)[0:transaction.challenge] == "0" * transaction.challenge):
+                     transaction.winner = request.clientId
+                     transaction.solution = request.solution
+                     return grpcMiner_pb2.intResult(result = 1)
+                 return grpcMiner_pb2.intResult(result=0)
+         return  grpcMiner_pb2.intResult(result=-1)
     def getWinner(self, request, context):
-          if(request.transactionId != transaction.transaction_id):
-              return grpcMiner_pb2.intResult(result = -1)
-          return grpcMiner_pb2.intResult(result = transaction.winner)
+        for transaction in transactions:
+            if(request.transactionId == transaction.transaction_id):
+                return grpcMiner_pb2.intResult(result = transaction.winner)
+        return grpcMiner_pb2.intResult(result = -1)
     def getSolution(self,request,context):
-        if(request.transactionId != transaction.transaction_id):
-            return grpcMiner_pb2.structResult(status = -1, solution = -1, challenge = -1)
-        if(transaction.solution == '' and transaction.winner == 0):
-            return grpcMiner_pb2.structResult(status = 1, solution = -1, challenge = transaction.challenge)
-        return grpcMiner_pb2.structResult(status = 0,solution =  transaction.solution, challenge = transaction.challenge)
+        for transaction in transactions:
+            if(request.transactionId == transaction.transaction_id):
+                if(transaction.solution == '' and transaction.winner == 0):
+                    return grpcMiner_pb2.structResult(status = 1, solution = -1, challenge = transaction.challenge)
+                return grpcMiner_pb2.structResult(status = 0,solution =  transaction.solution, challenge = transaction.challenge)
+        return grpcMiner_pb2.structResult(status = -1, solution = -1, challenge = -1)
          
 if __name__ == '__main__':
-    serve() 
+    serve()
     
