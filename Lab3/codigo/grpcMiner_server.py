@@ -3,7 +3,6 @@ import time
 from concurrent import futures
 import grpcMiner_pb2
 import grpcMiner_pb2_grpc
-import hashlib
 import random
 
 class Transaction:
