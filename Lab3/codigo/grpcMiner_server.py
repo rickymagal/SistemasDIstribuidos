@@ -43,7 +43,7 @@ def serve():
 
 class MinerulatorServicer(grpcMiner_pb2_grpc.apiServicer):
     def getTransactionId(self, request, context):
-        return grpcMiner_pb2.intResult(result= transaction.transaction_id)
+        return grpcMiner_pb2.intResult(result= transactions[0].transaction_id)
     def getChallenge(self, request, context):
         for transaction in transactions:
             if(request.transactionId == transaction.transaction_id):
