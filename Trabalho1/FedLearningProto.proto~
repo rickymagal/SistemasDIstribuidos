@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+message RegistrationRequest {
+  string ip = 1;
+  int32 port = 2;
+  int32 client_id = 3;
+}
+
+message RegistrationResponse {
+  int32 confirmation_code = 1;
+  int32 current_round = 2;
+}
+
+message TrainingStartRequest {
+  int32 current_round = 1;
+  string weights_file_path = 2;
+}
+
+
+message TrainingResponse {
+  int32 local_dataset_samples = 2;
+}
+
+message EvaluationRequest {
+  string aggregated_weights_file_path = 1;
+}
+
+message EvaluationResponse {
+  float accuracy = 1;
+}
+
+service TrainingServer {
+  rpc RegisterClient(RegistrationRequest) returns (RegistrationResponse);
+}service TrainingClient {
+  rpc StartTraining(TrainingStartRequest) returns (stream TrainingResponse);
+  rpc EvaluateModel(EvaluationRequest) returns (EvaluationResponse);
+}
