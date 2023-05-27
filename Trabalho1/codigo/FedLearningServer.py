@@ -47,7 +47,8 @@ class TrainingServer(pb2_grpc.TrainingServerServicer):
         return pb2.RegistrationResponse(confirmation_code=200)
     # Treina federado
     def TrainFederated(self):
-        while self.current_round < max_rounds:
+    	round_accuracy = 1
+        while self.current_round < max_rounds or round_accuracy<=target_tolerance:
             client_weights = []
             for client_id, client_info in self.clients.items():
                 training_response = stub.StartTraining(pb2.TrainingStartRequest(current_round=self.current_round, weights_file_path=client_info['weights']), wait_for_ready=True)
@@ -58,7 +59,8 @@ class TrainingServer(pb2_grpc.TrainingServerServicer):
                 self.model.save_weights(self.aggregated_weights_file_path)
                 evaluation_request = pb2.EvaluationRequest(aggregated_weights_file_path=self.aggregated_weights_file_path)
                 evaluation_response = stub.EvaluateModel(evaluation_request,wait_for_ready=True)
-                self.round_accuracies.append(evaluation_response.accuracy)
+                round_accuracy = evaluation_response.accuracy
+                self.round_accuracies.append(round_accuracy)
             self.current_round += 1
             self.plot_round_accuracies()
     # Plota precisao
