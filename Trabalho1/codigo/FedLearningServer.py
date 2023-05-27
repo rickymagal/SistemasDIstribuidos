@@ -10,7 +10,6 @@ import FedLearningProto_pb2 as pb2
 import FedLearningProto_pb2_grpc as pb2_grpc
 import matplotlib.pyplot as plt
 import threading
-import asyncio
 
 # Inputs
 min_clients = int(input("Numero minimo de clientes:"))
@@ -31,7 +30,7 @@ class TrainingServer(pb2_grpc.TrainingServerServicer):
         self.round_accuracies = [[]]
         self.current_round = 1
         self.finished_training = False
-        self.aggregated_weights_file_path = "aggregated_file.tf"
+        self.aggregated_weights_file_path = "aggregated_file.h5"
     #Chamada de Registro
     def RegisterClient(self, request, context):
         client_id = request.client_id
@@ -40,7 +39,7 @@ class TrainingServer(pb2_grpc.TrainingServerServicer):
         self.clients[client_id] = {
             'ip': client_ip,
             'port': client_port,
-            'weights': str(request.client_id) +"weights.tf"
+            'weights': str(request.client_id) +"weights.h5"
         }
         if len(self.clients) >= min_clients:
             thread = threading.Thread(target=self.TrainFederated)
@@ -52,11 +51,11 @@ class TrainingServer(pb2_grpc.TrainingServerServicer):
             client_weights = []
             for client_id, client_info in self.clients.items():
                 training_response = stub.StartTraining(pb2.TrainingStartRequest(current_round=self.current_round, weights_file_path=client_info['weights']), wait_for_ready=True)
-                self.model = tf.keras.models.load_model(client_info['weights'])
+                self.model.load_weights(client_info['weights'])
                 client_weights.append(self.model.get_weights())
-            for client in clients:
-                self.model.set_weights = average_weights(client_weights)
-                self.model.save(self.aggregated_weights_file_path)
+            for client in self.clients:
+                self.model.set_weights(average_weights(client_weights))
+                self.model.save_weights(self.aggregated_weights_file_path)
                 evaluation_request = pb2.EvaluationRequest(aggregated_weights_file_path=self.aggregated_weights_file_path)
                 evaluation_response = stub.EvaluateModel(evaluation_request,wait_for_ready=True)
                 self.round_accuracies.append(evaluation_response.accuracy)

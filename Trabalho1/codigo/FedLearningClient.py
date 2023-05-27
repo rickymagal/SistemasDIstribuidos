@@ -9,7 +9,7 @@ import grpc
 import numpy as np
 import FedLearningProto_pb2 as pb2
 import FedLearningProto_pb2_grpc as pb2_grpc
-import asyncio
+
 
 #Cliente de Treinamento
 class TrainingClient(pb2_grpc.TrainingClientServicer):
@@ -26,11 +26,10 @@ class TrainingClient(pb2_grpc.TrainingClientServicer):
     #Treina
     def fit(self):
         self.model.fit(self.x_train, self.y_train, epochs=1, verbose=2)
-        self.model.save(self.weights_file_path)
+        self.model.save_weights(self.weights_file_path)
     # Avalia modelo e seta os pesos passados pelo servidor
     def evaluate(self, filepath):
-        aggregatedModel = tf.keras.models.load_model(filepath)
-        self.model.set_weights(aggregatedModel.get_weights())
+        self.model.load_weights(filepath)
         loss, acc = self.model.evaluate(self.x_test, self.y_test, verbose=2)
         return loss, acc
     # Chamada de treinamento
