@@ -1,0 +1,119 @@
+import json
+import paho.mqtt.client as mqtt
+import random
+
+# Configurações do broker MQTT
+broker = "localhost"
+port = 1883
+topic_solution = "sd/solution"
+topic_result = "sd/result"
+
+# Tabela de transações
+transactions = []
+
+# Função para processar a mensagem de solução
+def process_solution(client, userdata, message):
+    payload = json.loads(message.payload)
+    client_id = payload["ClientID"]
+    transaction_id = payload["TransactionID"]
+    challenge = payload["Challenge"]
+    solution = payload["Solution"]
+
+    # Verifica se a transação está pendente
+    for transaction in transactions:
+        if transaction["TransactionID"] == transaction_id and transaction["Winner"] == -1:
+            # Verifica se a solução atende aos requisitos do desafio
+            if is_solution_valid(solution, transaction["Challenge"]):
+                # Atualiza a tabela de estado das transações
+                transaction["Winner"] = client_id
+                print("Solução aprovada para TransactionID:", transaction_id)
+                print("Cliente vencedor:", client_id)
+                print("Tabela de transações atualizada:")
+                print_table(transactions)
+                # Publica o resultado na fila sd/result
+                result = {
+                    "ClientID": client_id,
+                    "TransactionID": transaction_id,
+                    "Solution": solution,
+                    "Result": 1
+                }
+                client.publish(topic_result, json.dumps(result))
+            else:
+                print("Solução rejeitada para TransactionID:", transaction_id)
+                # Publica o resultado na fila sd/result informando que a solução foi rejeitada
+                result = {
+                    "ClientID": client_id,
+                    "TransactionID": transaction_id,
+                    "Solution": solution,
+                    "Result": 0
+                }
+                client.publish(topic_result, json.dumps(result))
+            break
+
+# Função para verificar se a solução atende aos requisitos do desafio
+def is_solution_valid(solution, challenge):
+    return solution.startswith("0" * challenge)
+
+# Função para imprimir a tabela de transações
+def print_table(transactions):
+    print("TransactionID\tChallenge\tSolution\tWinner")
+    for transaction in transactions:
+        print(
+            f"{transaction['TransactionID']}\t\t{transaction['Challenge']}\t\t{transaction['Challenge']}\t\t{transaction['Solution']}\t\t{transaction['Winner']}"
+        )
+
+# Função para publicar um novo desafio
+def publish_new_challenge(client):
+    # Implemente a geração de um novo desafio aqui
+    transaction_id = 0
+    challenge = random.randint(1,20)
+    solution = "None"  # Exemplo de solução
+
+    # Adiciona o novo desafio à tabela de transações
+    transactions.append({
+        "TransactionID": transaction_id,
+        "Challenge": challenge,
+        "Solution": solution,
+        "Winner": -1
+    })
+
+    # Publica o novo desafio na fila sd/challenge
+    challenge_data = {
+        "TransactionID": transaction_id,
+        "Challenge": challenge
+    }
+    client.publish(topic_challenge, json.dumps(challenge_data))
+    print("Novo desafio publicado:")
+    print("TransactionID:", transaction_id)
+    print("Desafio:", challenge)
+    print("Tabela de transações atualizada:")
+    print_table(transactions)
+
+# Configura o cliente MQTT
+client = mqtt.Client()
+client.connect(broker, port)
+
+# Assina a fila de mensagens de solução
+client.subscribe(topic_solution)
+client.message_callback_add(topic_solution, process_solution)
+
+try:
+    # Loop principal
+    while True:
+        print("Menu:")
+        print("1. Publicar novo desafio")
+        print("2. Sair do controlador")
+        choice = input("Escolha uma opção: ")
+
+        if choice == "1":
+            publish_new_challenge(client)
+        elif choice == "2":
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+except KeyboardInterrupt:
+    pass
+
+# Desconecta o cliente MQTT
+client.disconnect()
