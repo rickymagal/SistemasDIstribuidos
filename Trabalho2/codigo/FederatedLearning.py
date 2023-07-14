@@ -10,14 +10,11 @@ import json
 import paho.mqtt.client as mqtt
 import threading
 
-
 # Configurações do broker MQTT
 broker = "localhost"
 port = 1883
 topic_init = "sd/init"
 topic_election = "sd/election"
-topic_challenge = "sd/challenge"
-topic_solution = "sd/solution"
 
 # Variáveis para controle da eleição
 participants = set()
@@ -41,7 +38,7 @@ class TrainingClient:
         self.y_train = None
         self.x_test = None
         self.y_test = None
-        self.weights_file_path = None
+        self.weights_file_path = "weights_file.h5"
     
     def get_parameters(self, config):
         return self.model.get_weights()
@@ -107,6 +104,7 @@ class TrainingServer:
             elect_leader()
             client_weights = []
             for client_id, client_info in self.clients.items():
+                client = TrainingClient()
                 weights_file_path = client_info['weights']
                 local_dataset_samples = client.start_training(self.current_round, weights_file_path)
                 client_weights.append(client.get_parameters())
@@ -188,54 +186,6 @@ def start_election():
         "VoteID": vote_id
     }
     client.publish(topic_election, json.dumps(election_data))
-
-def process_challenge(client, userdata, message):
-    payload = json.loads(message.payload)
-    transaction_id = payload["TransactionID"]
-    challenge = payload["Challenge"]
-    print("Recebido novo desafio:")
-    print("TransactionID:", transaction_id)
-    print("Desafio:", challenge)
-    new_transaction = {
-        "Challenge": challenge,
-        "Solution": None,
-        "Winner": None
-    }
-    transactions[transaction_id] = new_transaction
-
-def process_solution(client, userdata, message):
-    payload = json.loads(message.payload)
-    client_id = payload["ClientID"]
-    transaction_id = payload["TransactionID"]
-    solution = payload["Solution"]
-
-    if transaction_id in transactions:
-        transaction = transactions[transaction_id]
-        if transaction["Solution"] is None:
-            challenge = transaction["Challenge"]
-            if solution.startswith("0" * challenge):
-                print("Solução válida encontrada para o TransactionID:", transaction_id)
-                print("ClientID:", client_id)
-                print("Solution:", solution)
-                transaction["Solution"] = solution
-                transaction["Winner"] = client_id
-            else:
-                print("Solução inválida para o TransactionID:", transaction_id)
-        else:
-            print("Transação já possui uma solução válida.")
-    else:
-        print("TransactionID inválido:", transaction_id)
-
-    print_transactions()
-
-def print_transactions():
-    print("Tabela de Transações:")
-    print("TransactionID | Challenge | Solution | Winner")
-    for transaction_id, transaction in transactions.items():
-        challenge = transaction["Challenge"]
-        solution = transaction["Solution"]
-        winner = transaction["Winner"]
-        print(f"{transaction_id:13} | {challenge:9} | {solution} | {winner}")
 
 # Gera um ClientID aleatório de 16 bits
 client_id = str(random.randint(0, 65535))
