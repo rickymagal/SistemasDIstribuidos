@@ -154,6 +154,14 @@ def elect_leader():
     leader_candidates = [client_id for client_id, vote_id in election_messages_received.items() if vote_id == max_vote_id]
     leader_id = random.choice(leader_candidates)
     leader_vote_id = max_vote_id
+    if client_id == leader_id:
+        # Inicializar o servidor de aprendizado federado
+        server = TrainingServer()
+        server.start()
+    else:
+        # Inicializar o cliente
+        client = TrainingClient()
+        client.start()
 
 def publish_leader_message():
     leader_data = {
