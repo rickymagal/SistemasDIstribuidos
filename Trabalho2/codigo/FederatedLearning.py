@@ -170,7 +170,7 @@ def federated_learning_round(round_num, model, x_train, y_train):
 
     model.fit(np.array(x_train_selected), np.array(y_train_selected), epochs=1, verbose=2)
 
-    if this_client_is_server:  # If this client is the coordinator
+    if this_client_is_server: 
         aggregated_weights = federated_average(selected_clients)
         broadcast_aggregated_weights(aggregated_weights)
 
@@ -188,7 +188,6 @@ def select_trainers(coordinator_id):
 #Funcao para agregar os pesos
 def federated_average(selected_clients):
     num_params = len(selected_clients[0][1])
-    # Initialize an array to store the aggregated weights
     aggregated_weights = np.zeros_like(selected_clients[0][1])
     for _, client_weights in selected_clients:
         aggregated_weights += client_weights
