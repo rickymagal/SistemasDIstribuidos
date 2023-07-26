@@ -31,7 +31,7 @@ Uma breve descrição de cada função do código é apresentada a seguir:
 
 `select_trainers(coordinator_id)`: Usada pelo servidor para selecionar um conjunto de clientes para treinamento em cada round. Ela retorna uma lista de clientes selecionados e seus respectivos IDs de voto, ordenados com base no ID de voto.
 
-`federated_average(selected_clients)`: Usada pelo servidor para agregar os pesos dos clientes selecionados. Deveria calcular a média dos pesos de todos os clientes selecionados e retorna os pesos agregados, mas isso ocorre de maneira equivocada.
+`federated_average(selected_clients)`: Usada pelo servidor para agregar os pesos dos clientes selecionados. Deveria calcular a média dos pesos de todos os clientes selecionados e retornar os pesos agregados, mas isso não ocorre pois não há passagem de pesos dos clientes para o servidor.
 
 `broadcast_aggregated_weights(aggregated_weights)`: Usada pelo servidor para enviar os pesos agregados para todos os clientes. Ele publica as informações no tópico "sd/weights".
 
