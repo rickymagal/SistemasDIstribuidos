@@ -31,7 +31,7 @@ Uma breve descrição de cada função do código é apresentada a seguir:
 
 `select_trainers(coordinator_id)`: Usada pelo servidor para selecionar um conjunto de clientes para treinamento em cada round. Ela retorna uma lista de clientes selecionados e seus respectivos IDs de voto, ordenados com base no ID de voto.
 
-`federated_average(selected_clients)`: Usada pelo servidor para agregar os pesos dos clientes selecionados. Ela calcula a média dos pesos de todos os clientes selecionados e retorna os pesos agregados.
+`federated_average(selected_clients)`: Usada pelo servidor para agregar os pesos dos clientes selecionados. Deveria calcular a média dos pesos de todos os clientes selecionados e retorna os pesos agregados, mas isso ocorre de maneira equivocada.
 
 `broadcast_aggregated_weights(aggregated_weights)`: Usada pelo servidor para enviar os pesos agregados para todos os clientes. Ele publica as informações no tópico "sd/weights".
 
@@ -41,4 +41,4 @@ Outras funções como `generate_client_id()` para gerar IDs de cliente aleatóri
 
 ## Resultados
 
-O programa produzido pode não funcionar bem em todos os ambientes. Tive sérios problemas na passagem de pesos pelo broker MQTT e creio que a solução que encontrei não foi satisfatória.
+O programa não realiza um aprendizado federado. Os pesos nunca são passados de cliente para servidor, apenas de servidor para cliente. 
