@@ -6,10 +6,39 @@ O objetivo do trabalho é implementar um sistema distribuído, serverless, para 
 
 ## Implementação
 
-Para a comunicação, são usadas 2 filas de mensagens: `init` e `election`. Na fila `init` são publicadas as mensagens de inicialização de cada cliente e na fila de eleição é publicada a mensagem de eleição. Idealmente, se usaria filas adicionais para a troca de pesos entre clientes e servidor de agregação de cada mensagem, mas pelas limitações do broker MQTT a escolha de projeto foi usar um `filepath` comum para os pesos agregados e um arquivo de pesos local para cada cliente. Para o processamentos das mengagens de eleição e de inicialização, são usadas as funções auxiliares `process_init_message` e `process_election_message`. Além disso, a mensagem de líder é publicada por `publish_leader_message`.
+O programa funciona da seguinte maneira: Cada cliente conecta-se ao broker MQTT local e publica sua mensagem de inicialização para o tópico "sd/init". Quando o número mínimo de clientes é atingido, o servidor inicia a eleição do líder através do tópico "sd/election". Cada cliente envia um voto contendo seu ID e um ID de voto gerado aleatoriamente. Em seguida, o cliente com o maior ID de voto é eleito o líder e os outros clientes são notificados através dos tópicos "sd/start_server" ou "sd/start_client", dependendo de serem escolhidos como servidor ou cliente, respectivamente. Os clientes selecionados como servidores coordenam o processo de treinamento. Eles recebem os pesos atualizados dos outros clientes e agregam esses pesos para criar o modelo central atualizado. Os servidores, então, enviam o modelo central atualizado de volta para todos os clientes para que eles possam continuar o treinamento em suas bases de dados locais. O processo de treinamento e agregação continua por várias rodadas até que o número máximo de rodadas seja atingido ou a acurácia desejada seja alcançada.
 
-A eleição é feita através das funções `start_election` e `elect_leader`. Como o nome diz, a função de início de eleição é chamada quando o requisito do número mínimo de clientes é cumprido, enquanto a função de eleição de líder é responsável por contar votos e, se for o caso, se proclamar como líder. Ao ser informado se é ou não líder, escolhe uma das interfaces para iniciar, `TrainingServer` se for o eleito e `TrainingClient` se não for. Adicionalmente, é definida uma função `average_weights` como a função a ser chamada para agregar os pesos.
+Uma breve descrição de cada função do código é apresentada a seguir:
 
+`process_init_message(client, userdata, message)`: Chamada quando uma mensagem de inicialização é recebida no tópico "sd/init". Ela processa a mensagem, adiciona o cliente que enviou a mensagem à lista de participantes e, quando o número mínimo de clientes é alcançado, inicia a eleição do líder chamando a função `start_election()`.
+
+`start_election()`: Responsável por iniciar a fase de eleição do líder. Ela gera um ID de voto aleatório e publica uma mensagem de eleição contendo o ID de voto e o ID do cliente atual para o tópico "sd/election".
+
+`process_election_message(client, userdata, message)`: Chamada quando uma mensagem de eleição é recebida no tópico "sd/election". Ela processa a mensagem, armazenando o ID de voto do cliente que enviou a mensagem e, quando todos os clientes enviaram seus votos, chama a função `elect_leader()` para eleger o líder.
+
+`elect_leader()`: Elege o líder com base no ID de voto mais alto. Ela identifica os candidatos ao líder, seleciona o cliente com o maior ID de voto como líder e publica a informação para que os outros clientes saibam quem é o líder eleito. Se o cliente atual for eleito como líder, ele se declara líder e publica uma mensagem no tópico "sd/start_server" para iniciar o treinamento como servidor, caso contrário, publica uma mensagem no tópico "sd/start_client" para iniciar o treinamento como cliente.
+
+`process_start_server(client, userdata, message)`:  Chamada quando uma mensagem é recebida no tópico "sd/start_server". Ela processa a mensagem e inicia o treinamento como servidor chamando a função `start_as_server()`.
+
+`process_start_client(client, userdata, message)`: Chamada quando uma mensagem é recebida no tópico "sd/start_client". Ela processa a mensagem e inicia o treinamento como cliente chamando a função `start_as_client()`.
+
+`start_as_server()`: Realiza o treinamento como servidor. Ela carrega a base de dados MNIST, define o modelo de aprendizado profundo, e inicia várias rodadas de aprendizado federado chamando a função `federated_learning_round()` em cada rodada. Ao final de cada rodada, o modelo é avaliado usando a função `evaluate_model()`, e se a acurácia desejada for alcançada, o treinamento é interrompido.
+
+`start_as_client()`: Realiza o treinamento como cliente. Ela é configurada para receber mensagens contendo os pesos atualizados do servidor no tópico "sd/weights". Quando uma mensagem é recebida, a função avalia o modelo local usando a base de dados de teste MNIST.
+
+(Treinamento Federado não está sendo realizado. O servidor deveria ter a única função de agregar os pesos e os clientes deveriam enviar seus pesos para serem agregados).
+
+`federated_learning_round(round_num, model, x_train, y_train)`: Realiza um round de aprendizado federado. O servidor seleciona um conjunto de clientes participantes para treinamento chamando a função select_trainers(). Em seguida, os clientes selecionados treinam seus modelos localmente e enviam seus pesos atualizados para o servidor. O servidor agrega esses pesos usando a função `federated_average()` e envia o modelo atualizado de volta para todos os clientes.
+
+`select_trainers(coordinator_id)`: Usada pelo servidor para selecionar um conjunto de clientes para treinamento em cada round. Ela retorna uma lista de clientes selecionados e seus respectivos IDs de voto, ordenados com base no ID de voto.
+
+`federated_average(selected_clients)`: Usada pelo servidor para agregar os pesos dos clientes selecionados. Ela calcula a média dos pesos de todos os clientes selecionados e retorna os pesos agregados.
+
+`broadcast_aggregated_weights(aggregated_weights)`: Usada pelo servidor para enviar os pesos agregados para todos os clientes. Ele publica as informações no tópico "sd/weights".
+
+`evaluate_model(model, round_num)`: Avalia o modelo em cada round de treinamento. Ela carrega a base de dados de teste MNIST e calcula a acurácia do modelo em relação aos dados de teste. A acurácia é registrada para análise posterior.
+
+Outras funções como `generate_client_id()` para gerar IDs de cliente aleatórios e as funções relacionadas ao MQTT para lidar com a conexão e recepção de mensagens também estão presentes.
 
 ## Resultados
 
